@@ -2,7 +2,7 @@ const INTERVAL_SPEED = 40;
 const MAIN_CONTAINER_WIDTH = 300;
 const MAIN_CONTAINER_HEIGHT = 300;
 
-function BallController(ballCount, parentClass){
+function BallController(ballCount, parentClass, ballType){
   this.ballList = []
   this.xSpeed = 2;
   this.ySpeed = 2;
@@ -14,6 +14,7 @@ function BallController(ballCount, parentClass){
 
   this.ballsXPositionList = []
   this.ballsYPositionList = []
+  this.ballType =  ballType;
 
   this.setDefaultParentStyle = function(){
       this.parentElement.style.position = 'relative';
@@ -28,7 +29,9 @@ function BallController(ballCount, parentClass){
       var xPos = Math.floor(Math.random() * MAIN_CONTAINER_WIDTH) - 1;
       var yPos = (Math.floor(Math.random() * MAIN_CONTAINER_WIDTH) + 1);
       var ball = new Ball(this.DEFAULT_BALL_SIZE, xPos, yPos, this.xSpeed, this.ySpeed).init();
-      ball.createCircle()
+      if(this.ballType ==='circle'){
+        ball.createCircle()
+      }
       this.parentElement.appendChild(ball.getElement())
       this.ballList.push(ball)
     }
@@ -74,13 +77,13 @@ function BallController(ballCount, parentClass){
 
           switch(horizontalCollision){
             case 'left':
-              this.ballList[i].setXSpeed(Math.abs(collidedBall.xSpeed))
-              collidedBall.setXSpeed(-collidedBall.xSpeed)
+              this.ballList[i].setXSpeed(Math.abs(collidedBall.xSpeed * 1.2))
+              collidedBall.setXSpeed(-collidedBall.xSpeed * 1.2)
               break
 
             case 'right':
-              this.ballList[i].setXSpeed(-collidedBall.xSpeed)
-              collidedBall.setXSpeed(Math.abs(collidedBall.xSpeed))
+              this.ballList[i].setXSpeed(-collidedBall.xSpeed * 1.2)
+              collidedBall.setXSpeed(Math.abs(collidedBall.xSpeed) * 1.2)
               break
           }
 
@@ -165,7 +168,12 @@ function BallController(ballCount, parentClass){
   }
 }
 
-var controller = new BallController(6, 'main-container')
-controller.setDefaultParentStyle()
-controller.create()
-controller.update()
+var ballController = new BallController(6, 'ball-container', 'circle')
+ballController.setDefaultParentStyle()
+ballController.create()
+ballController.update()
+
+var squareController = new BallController(6, 'square-container', 'square')
+squareController.setDefaultParentStyle()
+squareController.create()
+squareController.update()

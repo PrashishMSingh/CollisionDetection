@@ -1,5 +1,5 @@
-.main-container{
-  width: 600px;
+.ball-container,.square-container {
   margin: auto;
   border-radius: 10px;
+  margin-top: 20px;
 }
