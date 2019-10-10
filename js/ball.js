@@ -83,4 +83,11 @@ function Ball(size, xCord, yCord, xSpeed, ySpeed){
     this.ballElement.style.left = this.x + 'px';
     this.ballElement.style.top = this.y + 'px';
   }
+
+  this.checkCollision= function(otherBoxCord){
+    if(this.getPosition() == otherBoxCord.getPosition()){
+      return true;
+    }
+    return false;
+  }
 }
