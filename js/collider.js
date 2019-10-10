@@ -1,4 +1,4 @@
-const INTERVAL_SPEED = 40;
+const INTERVAL_SPEED = 10;
 const MAIN_CONTAINER_WIDTH = 300;
 const MAIN_CONTAINER_HEIGHT = 300;
 
@@ -27,7 +27,8 @@ function BallController(ballCount, parentClass){
     for(var i = 0; i< this.ballCount; i++){
       var xPos = Math.floor(Math.random() * MAIN_CONTAINER_WIDTH) - 1;
       var yPos = (Math.floor(Math.random() * MAIN_CONTAINER_WIDTH) + 1);
-      var ball = new Ball(this.DEFAULT_BALL_SIZE, xPos, yPos, this.xSpeed, this.ySpeed).init();
+      var ballSize = Math.floor(Math.random() * this.DEFAULT_BALL_SIZE) + 10
+      var ball = new Ball(ballSize, xPos, yPos, this.xSpeed, this.ySpeed).init();
       if(type == 'ball'){
         ball.createCircle()
       }
