@@ -1,5 +1,6 @@
-.main-container{
+.ball-container, .square-container{
   width: 600px;
   margin: auto;
   border-radius: 10px;
+  margin-bottom : 10px;
 }

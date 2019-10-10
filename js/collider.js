@@ -23,12 +23,14 @@ function BallController(ballCount, parentClass){
       return this
   }
 
-  this.create = function(){
+  this.create = function(type){
     for(var i = 0; i< this.ballCount; i++){
       var xPos = Math.floor(Math.random() * MAIN_CONTAINER_WIDTH) - 1;
       var yPos = (Math.floor(Math.random() * MAIN_CONTAINER_WIDTH) + 1);
       var ball = new Ball(this.DEFAULT_BALL_SIZE, xPos, yPos, this.xSpeed, this.ySpeed).init();
-      ball.createCircle()
+      if(type == 'ball'){
+        ball.createCircle()
+      }
       this.parentElement.appendChild(ball.getElement())
       this.ballList.push(ball)
     }
@@ -67,46 +69,50 @@ function BallController(ballCount, parentClass){
         // check which ball had collision and from where
         if(collisionOutput){
           var collidedBall = collisionOutput.collidedBall
-          var verticalCollision = collisionOutput.verticalCollision
-          var horizontalCollision = collisionOutput.horizontalCollision
-          console.log("vertical : ", verticalCollision)
-          console.log("horizontal : ", horizontalCollision)
+          var collisionPlace = collisionOutput.collisionPlace
 
-          switch(horizontalCollision){
-            case 'left':
-              this.ballList[i].setXSpeed(Math.abs(collidedBall.xSpeed))
+          switch(collisionPlace){
+            case 'right':
               collidedBall.setXSpeed(-collidedBall.xSpeed)
+              this.ballList[i].setXSpeed(Math.abs(this.ballList[i].xSpeed))
+              collidedBall.getElement().style.transform = 'rotate(270deg)'
+              this.ballList[i].getElement().style.transform = 'rotate(90deg)'
               break
 
-            case 'right':
-              this.ballList[i].setXSpeed(-collidedBall.xSpeed)
+            case 'left':
+              this.ballList[i].setXSpeed(-(this.ballList[i].xSpeed))
               collidedBall.setXSpeed(Math.abs(collidedBall.xSpeed))
+              collidedBall.getElement().style.transform = 'rotate(90deg)'
+              this.ballList[i].getElement().style.transform = 'rotate(270deg)'
+              break
+
+            case 'top':
+              this.ballList[i].setYSpeed(-(this.ballList[i].ySpeed))
+              collidedBall.setYSpeed(Math.abs(collidedBall.ySpeed))
+              collidedBall.getElement().style.transform = 'rotate(180deg)'
+              this.ballList[i].getElement().style.transform = 'rotate(0deg)'
+              break
+
+            case 'bottom':
+              collidedBall.setYSpeed(-collidedBall.ySpeed)
+              this.ballList[i].setYSpeed(Math.abs(this.ballList[i].ySpeed))
+              collidedBall.getElement().style.transform = 'rotate(0deg)'
+              this.ballList[i].getElement().style.transform = 'rotate(180deg)'
               break
           }
 
-        switch(verticalCollision){
-          case 'top':
-            this.ballList[i].setYSpeed(-collidedBall.ySpeed)
-            collidedBall.setYSpeed(Math.abs(collidedBall.ySpeed))
-            break
 
-          case 'bottom':
-            this.ballList[i].setYSpeed(Math.abs(collidedBall.ySpeed))
-            collidedBall.setYSpeed(-collidedBall.ySpeed)
-            break
+          this.ballList[i].move()
+          this.ballList[i].draw()
+          collidedBall.move()
+          collidedBall.draw()
 
+          collidedBall.getElement().style.backgroundColor = 'red'
+          this.ballList[i].getElement().style.backgroundColor = 'black'
         }
-        this.ballList[i].move()
-        this.ballList[i].draw()
-        collidedBall.move()
-        collidedBall.draw()
 
-        collidedBall.getElement().style.backgroundColor = 'red'
-        this.ballList[i].getElement().style.backgroundColor = 'black'
-      }
-
-        this.ballList[i].move()
-        this.ballList[i].draw()
+          this.ballList[i].move()
+          this.ballList[i].draw()
 
       }
     }).bind(this), INTERVAL_SPEED)
@@ -122,27 +128,39 @@ function BallController(ballCount, parentClass){
         var bottomCollision = (ball.y + ball.size) >= this.ballList[i].y
         var topCollision = ball.y <= (this.ballList[i].y + this.ballList[i].size)
 
-        var verticalCollisionPlace = ''
-        var horizontalCollisionPlace = ''
+        var leftDiff = ball.x - this.ballList[i].x - this.ballList[i].size
+        var rightDiff = (ball.x + ball.size) - this.ballList[i].x
+        var bottomDiff = (ball.y + ball.size) - this.ballList[i].y
+        var topDiff = ball.y - (this.ballList[i].y + this.ballList[i].size)
 
-        if(topCollision){
-          verticalCollisionPlace = 'bottom'
-        }else if(bottomCollision){
-          verticalCollisionPlace = 'top'
+        this.collisionPlace = ''
+        var minDiff = this.DEFAULT_BALL_SIZE
+
+        if( leftDiff < minDiff){
+          minDiff = leftDiff
+          collisionPlace = 'left'
         }
 
-        if(leftCollision){
-          horizontalCollisionPlace = 'left'
-        }else if(rightCollision){
-          horizontalCollisionPlace = 'right'
+        if(rightDiff < minDiff){
+          collisionPlace = 'right'
+          minDiff = rightDiff
+        }
+
+        if(bottomDiff < minDiff){
+          collisionPlace = 'bottom'
+          minDiff = bottomDiff
+
+        }
+        if(topDiff < minDiff){
+          collisionPlace = 'top'
+          minDiff = topDiff
         }
 
         if(ball.getBallType() === 'square'){
           if(leftCollision && rightCollision && topCollision && bottomCollision){
             return {
               collidedBall : this.ballList[i],
-              verticalCollision: verticalCollisionPlace,
-              horizontalCollision: horizontalCollisionPlace
+              collisionPlace: collisionPlace,
             }
           }
         }
@@ -155,8 +173,7 @@ function BallController(ballCount, parentClass){
           if((xDiff + yDiff) < (radius)**2){
             return{
               collidedBall:this.ballList[i],
-              verticalCollision: verticalCollisionPlace,
-              horizontalCollision: horizontalCollisionPlace
+              collisionPlace: collisionPlace,
             }
           }
         }
@@ -165,7 +182,12 @@ function BallController(ballCount, parentClass){
   }
 }
 
-var controller = new BallController(6, 'main-container')
+var controller = new BallController(6, 'ball-container')
 controller.setDefaultParentStyle()
-controller.create()
+controller.create('square')
+controller.update()
+
+var controller = new BallController(6, 'square-container')
+controller.setDefaultParentStyle()
+controller.create('ball')
 controller.update()
