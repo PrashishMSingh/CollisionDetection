@@ -1,6 +1,6 @@
 const INTERVAL_SPEED = 10;
-const MAIN_CONTAINER_WIDTH = 300;
-const MAIN_CONTAINER_HEIGHT = 300;
+const MAIN_CONTAINER_WIDTH = 1200;
+const MAIN_CONTAINER_HEIGHT = 1200;
 
 function BallController(ballCount, parentClass){
   this.ballList = []
@@ -27,7 +27,7 @@ function BallController(ballCount, parentClass){
     for(var i = 0; i< this.ballCount; i++){
       var xPos = Math.floor(Math.random() * MAIN_CONTAINER_WIDTH) - 1;
       var yPos = (Math.floor(Math.random() * MAIN_CONTAINER_WIDTH) + 1);
-      var ballSize = Math.floor(Math.random() * this.DEFAULT_BALL_SIZE) + 10
+      var ballSize = Math.floor(Math.random() * 30) + 20
       var ball = new Ball(ballSize, xPos, yPos, this.xSpeed, this.ySpeed).init();
       if(type == 'ball'){
         ball.createCircle()
@@ -183,12 +183,12 @@ function BallController(ballCount, parentClass){
   }
 }
 
-var controller = new BallController(6, 'ball-container')
+var controller = new BallController(100, 'ball-container')
 controller.setDefaultParentStyle()
 controller.create('square')
 controller.update()
 
-var controller = new BallController(6, 'square-container')
+var controller = new BallController(100, 'square-container')
 controller.setDefaultParentStyle()
 controller.create('ball')
 controller.update()
