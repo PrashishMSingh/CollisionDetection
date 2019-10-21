@@ -171,7 +171,7 @@ function BallController(ballCount, parentClass){
           var xDiff = ((ball.x) - (this.ballList[i].x))**2
           var yDiff = ((ball.y) - (this.ballList[i].y))**2
 
-          if((xDiff + yDiff) < (radius)**2){
+          if(Math.sqrt(xDiff + yDiff ) <= (ball.size)){
             return{
               collidedBall:this.ballList[i],
               collisionPlace: collisionPlace,
